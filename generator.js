@@ -1,7 +1,7 @@
 "use strict";
 
 const filesize = 25 * 1024 * 1024;
-const funcs = 100000;
+const funcs = 500000;
 const operators = filesize / 3 / funcs;
 const singleFunc = false;
 

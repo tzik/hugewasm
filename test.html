@@ -1,30 +1,40 @@
 <html><head><title>WebAssembly: start-up time profiling</title>
 <script>
-onload = function() {
-    var downloadFile = "huge.wasm";
+var profile = function() {
+    var downloadFile = document.getElementById("case").value;
+    if(!downloadFile) return;
 
     var textarea = document.getElementById("textarea");
     var log = function(message) {
         var now = performance.now();
-        textarea.value += (now - time) + ": " + message + "\n";
+        textarea.value += (now - time).toFixed(4) + ": " + message + "\n";
         time = performance.now();
     };
     var time = performance.now();
+    log("download begin");
 
     fetch(downloadFile).then(function(response) {
         log("download end");
         return response.arrayBuffer()
     }).then(function(bytes) {
-        log("compile start");
+        log("compile begin");
         return WebAssembly.compile(bytes);
     }).then(function(module) {
-        console.log(module);
         log("compile end");
         log("instantiate start");
         return WebAssembly.instantiate(module);
     }).then(function(result) {
         log("instantiate end");
+        log("===================");
     });
 }
 </script>
-</head><body><textarea id="textarea" cols="80" rows="10"></textarea></body></html>
+</head><body>
+    <select id="case">
+        <option value="single-function.wasm">Only one function with 25MB body</option>
+        <option value="100000-functions.wasm">100000 functions with 2.5KB function body</option>
+        <option value="500000-functions.wasm">500000 functions with 0.5KB function body</option>
+    </select><br>
+    <input type="button" value="Start" onclick="profile()"><br>
+    <textarea id="textarea" cols="80" rows="10"></textarea>
+</body></html>
