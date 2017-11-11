@@ -1,0 +1,30 @@
+<html><head><title>WebAssembly: start-up time profiling</title>
+<script>
+onload = function() {
+    var downloadFile = "huge.wasm";
+
+    var textarea = document.getElementById("textarea");
+    var log = function(message) {
+        var now = performance.now();
+        textarea.value += (now - time) + ": " + message + "\n";
+        time = performance.now();
+    };
+    var time = performance.now();
+
+    fetch(downloadFile).then(function(response) {
+        log("download end");
+        return response.arrayBuffer()
+    }).then(function(bytes) {
+        log("compile start");
+        return WebAssembly.compile(bytes);
+    }).then(function(module) {
+        console.log(module);
+        log("compile end");
+        log("instantiate start");
+        return WebAssembly.instantiate(module);
+    }).then(function(result) {
+        log("instantiate end");
+    });
+}
+</script>
+</head><body><textarea id="textarea" cols="80" rows="10"></textarea></body></html>
