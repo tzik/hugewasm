@@ -14,7 +14,11 @@ for(let i = 0; i < funcs; i++) {
         console.log("        get_local $rhs");
         console.log("        i32.add");
     }
-    console.log(`    ) (export "f${i}" (func $f${i}))`);
+    if(funcs > 100000 && i % (((funcs/100000)|0)+1) != 0) {
+        console.log(`    )`);
+    } else {
+        console.log(`    ) (export "f${i}" (func $f${i}))`);
+    }
     if(singleFunc) {
         break;
     }
